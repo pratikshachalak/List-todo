@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List Application</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f8ff;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    input, select, button {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .task {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .high {
+      background-color: #ffcccc;
+    }
+    .medium {
+      background-color: #fff3cd;
+    }
+    .low {
+      background-color: #d4edda;
+    }
+    .filters {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .filters button {
+      width: 30%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>To-Do List Application</h1>
+
+    <input type="text" id="taskInput" placeholder="Enter your task">
+    <input type="date" id="dateInput">
+    <select id="categoryInput">
+      <option value="Work">Work</option>
+      <option value="Personal">Personal</option>
+      <option value="College">College</option>
+    </select>
+    <select id="priorityInput">
+      <option value="High">High</option>
+      <option value="Medium">Medium</option>
+      <option value="Low">Low</option>
+    </select>
+    <button id="addTaskButton">Add Task</button>
+
+    <input type="text" id="searchInput" placeholder="Search tasks...">
+
+    <div class="filters">
+      <button id="filterAll">All</button>
+      <button id="filterHigh">High</button>
+      <button id="filterMedium">Medium</button>
+      <button id="filterLow">Low</button>
+    </div>
+
+    <div id="taskList"></div>
+  </div>
+
+  <script>
+    const taskInput = document.getElementById('taskInput');
+    const dateInput = document.getElementById('dateInput');
+    const categoryInput = document.getElementById('categoryInput');
+    const priorityInput = document.getElementById('priorityInput');
+    const addTaskButton = document.getElementById('addTaskButton');
+    const searchInput = document.getElementById('searchInput');
+    const taskList = document.getElementById('taskList');
+
+    const filterAll = document.getElementById('filterAll');
+    const filterHigh = document.getElementById('filterHigh');
+    const filterMedium = document.getElementById('filterMedium');
+    const filterLow = document.getElementById('filterLow');
+
+    let tasks = [];
+
+    function renderTasks(filter = 'All') {
+      taskList.innerHTML = '';
+
+      const filteredTasks = tasks.filter(task => {
+        if (filter === 'All') return true;
+        return task.priority === filter;
+      }).filter(task => {
+        const searchTerm = searchInput.value.toLowerCase();
+        return task.name.toLowerCase().includes(searchTerm) ||
+               task.category.toLowerCase().includes(searchTerm);
+      });
+
+      filteredTasks.forEach((task, index) => {
+        const taskElement = document.createElement('div');
+        taskElement.className = `task ${task.priority.toLowerCase()}`;
+        taskElement.innerHTML = `
+          <div>
+            <strong>${task.name}</strong> - ${task.category} - ${task.date}
+          </div>
+          <button onclick="deleteTask(${index})">Delete</button>
+        `;
+        taskList.appendChild(taskElement);
+      });
+    }
+
+    function addTask() {
+      const task = {
+        name: taskInput.value,
+        date: dateInput.value,
+        category: categoryInput.value,
+        priority: priorityInput.value
+      };
+      tasks.push(task);
+      taskInput.value = '';
+      dateInput.value = '';
+      renderTasks();
+    }
+
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      renderTasks();
+    }
+
+    addTaskButton.addEventListener('click', addTask);
+
+    filterAll.addEventListener('click', () => renderTasks('All'));
+    filterHigh.addEventListener('click', () => renderTasks('High'));
+    filterMedium.addEventListener('click', () => renderTasks('Medium'));
+    filterLow.addEventListener('click', () => renderTasks('Low'));
+
+    searchInput.addEventListener('input', () => renderTasks());
+  </script>
+</body>
+</html>

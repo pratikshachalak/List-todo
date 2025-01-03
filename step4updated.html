@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List with Prioritization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+        }
+
+        .task-list {
+            margin-top: 20px;
+        }
+
+        .task {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .priority-high {
+            background-color: #ffcccc;
+        }
+
+        .priority-medium {
+            background-color: #fff3cd;
+        }
+
+        .priority-low {
+            background-color: #d4edda;
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .filter-buttons button {
+            flex: 1;
+            margin: 0 5px;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .filter-buttons button.active {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>To-Do List</h1>
+
+        <div class="form-group">
+            <label for="task">Task</label>
+            <input type="text" id="task" placeholder="Enter your task">
+        </div>
+
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category">
+                <option value="Work">Work</option>
+                <option value="Personal">Personal</option>
+                <option value="College">College</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="priority">Priority</label>
+            <select id="priority">
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <button class="btn" onclick="addTask()">Add Task</button>
+        </div>
+
+        <div class="filter-buttons">
+            <button onclick="filterTasks('All')">All</button>
+            <button onclick="filterTasks('High')">High</button>
+            <button onclick="filterTasks('Medium')">Medium</button>
+            <button onclick="filterTasks('Low')">Low</button>
+        </div>
+
+        <div class="task-list" id="task-list"></div>
+    </div>
+
+    <script>
+        const tasks = [];
+
+        function addTask() {
+            const taskInput = document.getElementById('task');
+            const categoryInput = document.getElementById('category');
+            const priorityInput = document.getElementById('priority');
+
+            const task = {
+                name: taskInput.value,
+                category: categoryInput.value,
+                priority: priorityInput.value
+            };
+
+            tasks.push(task);
+            taskInput.value = '';
+            renderTasks();
+        }
+
+        function renderTasks(filter = 'All') {
+            const taskList = document.getElementById('task-list');
+            taskList.innerHTML = '';
+
+            tasks.forEach(task => {
+                if (filter === 'All' || task.priority === filter) {
+                    const taskDiv = document.createElement('div');
+                    taskDiv.className = `task priority-${task.priority.toLowerCase()}`;
+
+                    taskDiv.innerHTML = `
+                        <span>${task.name} (${task.category})</span>
+                        <span>${task.priority} Priority</span>
+                    `;
+
+                    taskList.appendChild(taskDiv);
+                }
+            });
+        }
+
+        function filterTasks(priority) {
+            renderTasks(priority);
+        }
+
+        renderTasks();
+    </script>
+</body>
+</html>

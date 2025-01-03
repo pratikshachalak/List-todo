@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List with Categories</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f3f4f6;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      width: 500px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #4caf50;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #4caf50;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .task {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      margin: 5px 0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+    .task.completed {
+      text-decoration: line-through;
+      color: gray;
+    }
+    .filters {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+    .filters button {
+      width: 32%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>To-Do List</h1>
+    <form id="taskForm">
+      <input type="text" id="taskName" placeholder="Enter your task" required />
+      <input type="date" id="taskDate" required />
+      <select id="taskCategory" required>
+        <option value="Work">Work</option>
+        <option value="Personal">Personal</option>
+        <option value="College">College</option>
+      </select>
+      <button type="submit">Add Task</button>
+    </form>
+
+    <div class="filters">
+      <button id="allTasks">All</button>
+      <button id="pendingTasks">Pending</button>
+      <button id="completedTasks">Completed</button>
+    </div>
+
+    <div class="filters">
+      <button id="workTasks">Work</button>
+      <button id="personalTasks">Personal</button>
+      <button id="collegeTasks">College</button>
+    </div>
+
+    <div id="taskList"></div>
+  </div>
+
+  <script>
+    const taskForm = document.getElementById('taskForm');
+    const taskList = document.getElementById('taskList');
+    const allTasksButton = document.getElementById('allTasks');
+    const pendingTasksButton = document.getElementById('pendingTasks');
+    const completedTasksButton = document.getElementById('completedTasks');
+    const workTasksButton = document.getElementById('workTasks');
+    const personalTasksButton = document.getElementById('personalTasks');
+    const collegeTasksButton = document.getElementById('collegeTasks');
+
+    let tasks = [];
+
+    taskForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const taskName = document.getElementById('taskName').value;
+      const taskDate = document.getElementById('taskDate').value;
+      const taskCategory = document.getElementById('taskCategory').value;
+
+      const newTask = {
+        id: Date.now(),
+        name: taskName,
+        date: taskDate,
+        category: taskCategory,
+        completed: false,
+      };
+
+      tasks.push(newTask);
+      renderTasks(tasks);
+      taskForm.reset();
+    });
+
+    function renderTasks(taskArray) {
+      taskList.innerHTML = '';
+      taskArray.forEach(task => {
+        const taskDiv = document.createElement('div');
+        taskDiv.className = `task ${task.completed ? 'completed' : ''}`;
+        taskDiv.innerHTML = `
+          <span>${task.name} - ${task.date} (${task.category})</span>
+          <div>
+            <button onclick="markComplete(${task.id})">✔</button>
+            <button onclick="deleteTask(${task.id})">❌</button>
+          </div>
+        `;
+        taskList.appendChild(taskDiv);
+      });
+    }
+
+    function markComplete(taskId) {
+      tasks = tasks.map(task =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task
+      );
+      renderTasks(tasks);
+    }
+
+    function deleteTask(taskId) {
+      tasks = tasks.filter(task => task.id !== taskId);
+      renderTasks(tasks);
+    }
+
+    allTasksButton.addEventListener('click', () => renderTasks(tasks));
+    pendingTasksButton.addEventListener('click', () =>
+      renderTasks(tasks.filter(task => !task.completed))
+    );
+    completedTasksButton.addEventListener('click', () =>
+      renderTasks(tasks.filter(task => task.completed))
+    );
+
+    workTasksButton.addEventListener('click', () =>
+      renderTasks(tasks.filter(task => task.category === 'Work'))
+    );
+    personalTasksButton.addEventListener('click', () =>
+      renderTasks(tasks.filter(task => task.category === 'Personal'))
+    );
+    collegeTasksButton.addEventListener('click', () =>
+      renderTasks(tasks.filter(task => task.category === 'College'))
+    );
+  </script>
+</body>
+</html>
